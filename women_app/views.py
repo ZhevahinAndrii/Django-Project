@@ -34,8 +34,8 @@ def about(request: WSGIRequest):
     return render(request, 'women/about.html', context=context)
 
 
-def post(request: WSGIRequest, post_slug: str):
-    post_to_show: Woman = services.get_single_published_post_or_404(slug=post_slug)
+def show_post(request: WSGIRequest, post_slug: str):
+    post_to_show: Woman = services.get_single_published_post_with_tags_or_404(slug=post_slug)
     data = {
         'title': post_to_show.title,
         'menu': menu,

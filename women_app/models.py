@@ -25,6 +25,7 @@ class Woman(models.Model):
                                  related_name="women",
                                  related_query_name="woman")
     tags = models.ManyToManyField(to='PostTag', blank=True, related_name='posts')
+    husband = models.OneToOneField(to='Man', on_delete=models.SET_NULL, null=True, blank=True, related_name='wife')
 
     class Meta:
         verbose_name = gettext_lazy('Woman')
@@ -68,3 +69,11 @@ class PostTag(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Man(models.Model):
+    name = models.CharField(max_length=100)
+    age = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name

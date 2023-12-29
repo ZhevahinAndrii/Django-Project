@@ -16,9 +16,16 @@ def get_all_tags():
     return PostTag.objects.all()
 
 
-def get_single_published_post_or_404(**kwargs):
+def get_single_published_post_or_404(**kwargs) -> Woman:
     try:
         return get_object_or_404(Woman.published, **kwargs)
+    except Woman.MultipleObjectsReturned:
+        raise Http404()
+
+
+def get_single_published_post_with_tags_or_404(**kwargs) -> Woman:
+    try:
+        return get_object_or_404(Woman.published.prefetch_related('tags'), **kwargs)
     except Woman.MultipleObjectsReturned:
         raise Http404()
 
