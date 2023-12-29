@@ -1,0 +1,18 @@
+[
+  {
+    "model": "women_app.womancategory",
+    "pk": 1,
+    "fields": {
+      "name": "Actresses",
+      "slug": "actresses"
+    }
+  },
+  {
+    "model": "women_app.womancategory",
+    "pk": 2,
+    "fields": {
+      "name": "Singers",
+      "slug": "singers"
+    }
+  }
+]

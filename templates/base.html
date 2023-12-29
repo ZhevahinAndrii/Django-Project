@@ -31,7 +31,7 @@
 <!-- Sidebar слева -->
 	<td valign="top" class="left-chapters">
 	<ul id="leftchapters">
-        {% if category_selected == 0 or category_selected == None %}
+        {% if category_selected == 0 %}
 		<li class="selected">All categories</li>
         {% else %}
             <li><a href="{% url 'women:index' %}">All categories</a></li>
@@ -41,8 +41,9 @@
 {#            ...#}
 {#        {% endfor %}#}
 		{% categories_show category_selected%}
-		<li class="share">
-		</li>
+		<li>
+            {% show_tags %}
+        </li>
 	</ul>
 </td>
 <!-- Конец Sidebar'а -->

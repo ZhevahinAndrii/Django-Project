@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 import women_app.services as services
-from women_app.models import Woman, WomanCategory
+from .models import Woman, WomanCategory, PostTag
 
 menu = [{'title': 'About site', 'url_name': "women:about"}]
 categories = [
@@ -20,7 +20,8 @@ def index(request: WSGIRequest):
     context = {
         'title': 'Index page',
         'menu': menu,
-        'posts': posts
+        'posts': posts,
+        'category_selected': 0
     }
     return render(request, 'women/index.html', context=context)
 
@@ -28,7 +29,7 @@ def index(request: WSGIRequest):
 def about(request: WSGIRequest):
     context = {
         'title': 'About page',
-        'menu': menu
+        'menu': menu,
     }
     return render(request, 'women/about.html', context=context)
 
@@ -52,5 +53,17 @@ def show_category(request: WSGIRequest, category_slug: str):
         'menu': menu,
         'category_selected': category.pk,
         'posts': posts
+    }
+    return render(request, 'women/index.html', context=context)
+
+
+def show_tag(request: WSGIRequest, tag_slug: str):
+    tag = services.get_post_tag_or_404(slug=tag_slug)
+    posts = services.get_published_posts_by_tag(tag)
+    context = {
+        'title': f'Tag: {tag.title}',
+        'menu': menu,
+        'posts': posts,
+        'category_selected': None
     }
     return render(request, 'women/index.html', context=context)
