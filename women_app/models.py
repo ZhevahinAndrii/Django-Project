@@ -24,6 +24,7 @@ class Woman(models.Model):
     category = models.ForeignKey(to="WomanCategory", on_delete=models.SET_NULL, null=True,
                                  related_name="women",
                                  related_query_name="woman")
+    tags = models.ManyToManyField(to='PostTag', blank=True, related_name='posts')
 
     class Meta:
         verbose_name = gettext_lazy('Woman')
@@ -45,6 +46,20 @@ class WomanCategory(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("women:category", kwargs={'category_slug': self.slug})
+
     class Meta:
         constraints = (models.UniqueConstraint(fields=("slug",), name="cat_slug_unique_constraint"),)
         indexes = (models.Index(fields=('slug',)),)
+
+
+class PostTag(models.Model):
+    title = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=255)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        constraints = (models.UniqueConstraint(fields=("slug",), name="tag_slug_unique_constraint"),)
