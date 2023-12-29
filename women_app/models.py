@@ -21,11 +21,14 @@ class Woman(models.Model):
     status = models.IntegerField(choices=Status.choices, default=Status.PUBLISHED)
     objects = models.Manager()
     published = PublishedPostsManager()
+    category = models.ForeignKey(to="WomanCategory", on_delete=models.SET_NULL, null=True,
+                                 related_name="women",
+                                 related_query_name="woman")
 
     class Meta:
         verbose_name = gettext_lazy('Woman')
         verbose_name_plural = gettext_lazy('Women')
-        constraints = (models.UniqueConstraint(fields=('slug',), name="slug_unique_constraint"),)
+        constraints = (models.UniqueConstraint(fields=('slug',), name="woman_slug_unique_constraint"),)
         indexes = (models.Index(fields=('slug',)),)
 
     def get_absolute_url(self):
@@ -33,3 +36,15 @@ class Woman(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class WomanCategory(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        constraints = (models.UniqueConstraint(fields=("slug",), name="cat_slug_unique_constraint"),)
+        indexes = (models.Index(fields=('slug',)),)
