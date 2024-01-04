@@ -7,7 +7,8 @@ from .handlers import page_not_found
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('women/', include('women_app.urls', namespace='women'))
+    path('women/', include('women_app.urls', namespace='women')),
+    path('__debug__/',include('debug_toolbar.urls'))
 ]
 
 handler404 = page_not_found

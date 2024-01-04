@@ -1,12 +1,8 @@
-from http import HTTPStatus
-
 from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.shortcuts import render
 
 import women_app.services as services
-from .models import Woman, WomanCategory, PostTag
+from .models import Woman
 
 menu = [{'title': 'About site', 'url_name': "women:about"}]
 categories = [
@@ -16,7 +12,8 @@ categories = [
 
 
 def index(request: WSGIRequest):
-    posts = services.get_all_published_posts().select_related("category")
+    posts = services.get_all_published_posts().select_related("category").defer('status', 'category__slug',
+                                                                                'time_created', 'husband_id')
     context = {
         'title': 'Index page',
         'menu': menu,
@@ -47,7 +44,7 @@ def show_post(request: WSGIRequest, post_slug: str):
 
 def show_category(request: WSGIRequest, category_slug: str):
     category = services.get_post_category_or_404(slug=category_slug)
-    posts = services.get_published_posts_by_category_id(category.id)
+    posts = category.posts.defer('status', 'husband_id', 'time_created')
     context = {
         'title': f'Showing category: {category.name}',
         'menu': menu,
@@ -59,7 +56,7 @@ def show_category(request: WSGIRequest, category_slug: str):
 
 def show_tag(request: WSGIRequest, tag_slug: str):
     tag = services.get_post_tag_or_404(slug=tag_slug)
-    posts = services.get_published_posts_by_tag(tag)
+    posts = tag.posts.select_related('category').defer('status', 'time_created', 'husband_id', 'category__slug')
     context = {
         'title': f'Tag: {tag.title}',
         'menu': menu,

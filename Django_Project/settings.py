@@ -22,6 +22,9 @@ SECRET_KEY = env.get("SECRET_KEY")
 DEBUG = env.get("DEBUG") == "True"
 
 ALLOWED_HOSTS = ["*"]
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
 
 
 # Application definition
@@ -34,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'women_app.apps.WomenAppConfig',
-    'django_extensions'
+    'django_extensions',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -45,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'Django_Project.urls'

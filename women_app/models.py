@@ -22,9 +22,9 @@ class Woman(models.Model):
     objects = models.Manager()
     published = PublishedPostsManager()
     category = models.ForeignKey(to="WomanCategory", on_delete=models.SET_NULL, null=True,
-                                 related_name="women",
-                                 related_query_name="woman")
-    tags = models.ManyToManyField(to='PostTag', blank=True, related_name='posts')
+                                 related_name="posts",
+                                 related_query_name="post")
+    tags = models.ManyToManyField(to='PostTag', blank=True, related_name='posts', related_query_name='post')
     husband = models.OneToOneField(to='Man', on_delete=models.SET_NULL, null=True, blank=True, related_name='wife')
 
     class Meta:
@@ -33,6 +33,8 @@ class Woman(models.Model):
         constraints = (models.UniqueConstraint(fields=('slug',), name="woman_slug_unique_constraint"),)
         indexes = (models.Index(fields=('slug',)),)
         default_manager_name = 'published'
+        base_manager_name = 'published'
+        get_latest_by = 'time_created'
 
     def get_absolute_url(self):
         return reverse("women:post", kwargs={'post_slug': self.slug})
@@ -74,6 +76,7 @@ class PostTag(models.Model):
 class Man(models.Model):
     name = models.CharField(max_length=100)
     age = models.PositiveIntegerField()
+    marriages_count = models.IntegerField(blank=True, default=0)
 
     def __str__(self):
         return self.name
