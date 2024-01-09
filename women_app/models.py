@@ -10,31 +10,30 @@ class PublishedPostsManager(models.Manager):
 
 class Woman(models.Model):
     class Status(models.IntegerChoices):
-        DRAFT = 0, gettext_lazy("Not published")
-        PUBLISHED = 1, gettext_lazy("Published")
+        DRAFT = 0, gettext_lazy("Чернетка")
+        PUBLISHED = 1, gettext_lazy("Опубліковано")
 
     slug = models.SlugField(max_length=255)
-    title = models.CharField(max_length=255)
-    content = models.TextField(blank=True)
-    time_created = models.DateTimeField(auto_now_add=True)
-    time_last_modified = models.DateTimeField(auto_now=True)
-    status = models.IntegerField(choices=Status.choices, default=Status.PUBLISHED)
+    title = models.CharField(max_length=255, verbose_name="Ім'я")
+    content = models.TextField(blank=True, verbose_name='Текст статті')
+    time_created = models.DateTimeField(auto_now_add=True, verbose_name='Час створення')
+    time_last_modified = models.DateTimeField(auto_now=True, verbose_name='Час останньої зміни')
+    status = models.IntegerField(choices=Status.choices, default=Status.PUBLISHED, verbose_name='Статус')
     objects = models.Manager()
     published = PublishedPostsManager()
     category = models.ForeignKey(to="WomanCategory", on_delete=models.SET_NULL, null=True,
                                  related_name="posts",
-                                 related_query_name="post")
+                                 related_query_name="post", verbose_name='Категорія')
     tags = models.ManyToManyField(to='PostTag', blank=True, related_name='posts', related_query_name='post')
     husband = models.OneToOneField(to='Man', on_delete=models.SET_NULL, null=True, blank=True, related_name='wife')
 
     class Meta:
-        verbose_name = gettext_lazy('Woman')
-        verbose_name_plural = gettext_lazy('Women')
+        verbose_name = 'Жінка'
+        verbose_name_plural = 'Жінки'
         constraints = (models.UniqueConstraint(fields=('slug',), name="woman_slug_unique_constraint"),)
         indexes = (models.Index(fields=('slug',)),)
-        default_manager_name = 'published'
-        base_manager_name = 'published'
         get_latest_by = 'time_created'
+        default_manager_name = 'published'
 
     def get_absolute_url(self):
         return reverse("women:post", kwargs={'post_slug': self.slug})
@@ -44,12 +43,14 @@ class Woman(models.Model):
 
 
 class WomanCategory(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name='Назва категорії')
     slug = models.SlugField(max_length=255)
 
     class Meta:
         constraints = (models.UniqueConstraint(fields=("slug",), name="cat_slug_unique_constraint"),)
         indexes = (models.Index(fields=('slug',)),)
+        verbose_name = 'Категорія публікації'
+        verbose_name_plural = 'Категорії публікацій'
 
     def get_absolute_url(self):
         return reverse("women:category", kwargs={'category_slug': self.slug})
