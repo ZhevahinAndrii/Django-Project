@@ -44,7 +44,7 @@ def show_post(request: WSGIRequest, post_slug: str):
 
 def show_category(request: WSGIRequest, category_slug: str):
     category = services.get_post_category_or_404(slug=category_slug)
-    posts = category.posts.defer('status', 'husband_id', 'time_created')
+    posts = category.posts.filter(status=Woman.Status.PUBLISHED).defer('status', 'husband_id', 'time_created')
     context = {
         'title': f'Showing category: {category.name}',
         'menu': menu,
@@ -56,7 +56,9 @@ def show_category(request: WSGIRequest, category_slug: str):
 
 def show_tag(request: WSGIRequest, tag_slug: str):
     tag = services.get_post_tag_or_404(slug=tag_slug)
-    posts = tag.posts.select_related('category').defer('status', 'time_created', 'husband_id', 'category__slug')
+    posts = tag.posts.filter(status=Woman.Status.PUBLISHED).select_related('category').defer('status', 'time_created',
+                                                                                             'husband_id',
+                                                                                             'category__slug')
     context = {
         'title': f'Tag: {tag.title}',
         'menu': menu,

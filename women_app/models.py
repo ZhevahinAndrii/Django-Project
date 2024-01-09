@@ -33,7 +33,6 @@ class Woman(models.Model):
         constraints = (models.UniqueConstraint(fields=('slug',), name="woman_slug_unique_constraint"),)
         indexes = (models.Index(fields=('slug',)),)
         get_latest_by = 'time_created'
-        default_manager_name = 'published'
 
     def get_absolute_url(self):
         return reverse("women:post", kwargs={'post_slug': self.slug})
