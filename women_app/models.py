@@ -25,7 +25,7 @@ class Woman(models.Model):
     published = PublishedPostsManager()
     category = models.ForeignKey(to="WomanCategory", on_delete=models.SET_NULL, null=True,
                                  related_name="posts",
-                                 related_query_name="post", verbose_name='Категорія')
+                                 related_query_name="post", verbose_name='Категорія', blank=True)
     tags = models.ManyToManyField(to='PostTag', blank=True, related_name='posts', related_query_name='post',
                                   verbose_name='Теги')
     husband = models.OneToOneField(to='Man', on_delete=models.SET_NULL, null=True, blank=True, related_name='wife')

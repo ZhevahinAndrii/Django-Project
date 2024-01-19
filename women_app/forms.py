@@ -28,7 +28,7 @@ class AddPostForm(forms.ModelForm):
     # content = forms.CharField(widget=forms.Textarea(attrs={'cols': 50, 'rows': 5}), required=False, label='Зміст',
     #                           empty_value='Content')
     # status = forms.ChoiceField(choices=((0, 'Чернетка'), (1, 'Опубліковано')), label='Статус', initial=1)
-    category = forms.ModelChoiceField(queryset=WomanCategory.objects.all(), label='Категорія', empty_label='Не обрано')
+    category = forms.ModelChoiceField(queryset=WomanCategory.objects.all(), label='Категорія', empty_label='Не обрано', required=False)
     husband = forms.ModelChoiceField(queryset=Man.objects.filter(wife__isnull=True), required=False, label='Чоловік',
                                      empty_label='Незаміжня')
 

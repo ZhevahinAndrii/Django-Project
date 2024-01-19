@@ -1,10 +1,10 @@
 import uuid
 
-
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import ListView, DetailView, FormView, CreateView
 
 import women_app.services as services
 from .forms import AddPostForm, UploadFileForm
@@ -15,9 +15,6 @@ categories = [
     {'id': 1, 'name': 'Actresses'},
     {'id': 2, 'name': 'Singers'}
 ]
-
-
-
 
 
 def handle_uploaded_file(f):
@@ -54,6 +51,22 @@ def show_post(request: WSGIRequest, post_slug: str):
     return render(request, 'women/post.html', context=data)
 
 
+class PostView(DetailView):
+    template_name = 'women/post.html'
+    context_object_name = 'post'
+    slug_url_kwarg = 'post_slug'
+
+    def get_object(self, queryset=None):
+        return services.get_single_published_post_with_tags_or_404(slug=self.kwargs[self.slug_url_kwarg])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = context[self.context_object_name].title
+        context['menu'] = menu
+        context['category_selected'] = context[self.context_object_name].category_id
+        return context
+
+
 def show_category(request: WSGIRequest, category_slug: str):
     category = services.get_post_category_or_404(slug=category_slug)
     posts = category.posts.filter(status=Woman.Status.PUBLISHED).defer('status', 'husband_id', 'time_created')
@@ -80,36 +93,81 @@ def show_tag(request: WSGIRequest, tag_slug: str):
     return render(request, 'women/index.html', context=context)
 
 
-def addpage(request):
-    if request.method == "POST":
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('women:index')
-    else:
-        form = AddPostForm()
-    return render(request, 'women/addpage.html', {'menu': menu, 'title': 'Додавання публікації', 'form': form})
-
-
-class IndexView(TemplateView):
+class IndexView(ListView):
     template_name = 'women/index.html'
+    queryset = services.get_all_published_posts().select_related("category").defer('status', 'category__slug',
+                                                                                   'time_created',
+                                                                                   'husband_id')
+    context_object_name = 'posts'
     extra_context = {
         'title': 'Домашня сторінка',
         'menu': menu,
-        'posts': services.get_all_published_posts().select_related("category").defer('status', 'category__slug',
-                                                                                     'time_created',
-                                                                                     'husband_id'),
         'category_selected': 0
     }
 
 
-class AddPageView(View):
-    def get(self, request):
-        return render(request, 'women/addpage.html', {'menu': menu, 'title': 'Додавання публікації', 'form': AddPostForm()})
+class CategoryView(ListView):
+    template_name = 'women/index.html'
+    context_object_name = 'posts'
 
-    def post(self, request):
+    def get_queryset(self):
+        return (Woman.published.filter(category__slug=self.kwargs['category_slug']).select_related('category').
+                defer('status', 'time_created', 'husband_id', 'category__slug'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = services.get_post_category_or_404(slug=self.kwargs['category_slug'])
+        context['title'] = f'Категорія: {category.name}'
+        context['menu'] = menu
+        context['category_selected'] = category.pk
+        return context
+
+
+class TagView(ListView):
+    template_name = 'women/index.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        return (Woman.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('category').
+                defer('status', 'time_created', 'husband_id', 'category__slug'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag = services.get_post_tag_or_404(slug=self.kwargs['tag_slug'])
+        context['title'] = f'Тег: {tag.title}'
+        context['menu'] = menu
+        context['category_selected'] = None
+        return context
+
+
+class AddPageView(View):
+    @staticmethod
+    def get(request):
+        return render(request, 'women/addpage.html',
+                      {'menu': menu, 'title': 'Додавання публікації', 'form': AddPostForm()})
+
+    @staticmethod
+    def post(request):
         form = AddPostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('women:index')
         return render(request, 'women/addpage.html', {'menu': menu, 'title': 'Додавання публікації', 'form': form})
+
+
+# class AddPostView(FormView):
+#     template_name = 'women/addpage.html'
+#     form_class = AddPostForm
+#     success_url = reverse_lazy('women:index')
+#
+#     def form_valid(self, form):
+#         form.save()
+#         return super().form_valid(form)
+
+
+class AddPostView(CreateView):
+    template_name = 'women/addpage.html'
+    form_class = AddPostForm
+    # success_url = reverse_lazy('women:index') if you don`t use success url it will be automatically redirected
+    # to get_absolute_url of created object
+

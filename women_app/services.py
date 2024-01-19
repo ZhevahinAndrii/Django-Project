@@ -31,13 +31,6 @@ def get_all_important_tags():
             filter(posts_count__gt=0))
 
 
-def get_single_published_post_or_404(**kwargs) -> Woman:
-    try:
-        return get_object_or_404(Woman.published.defer('status', 'time_created'), **kwargs)
-    except Woman.MultipleObjectsReturned:
-        raise Http404()
-
-
 def get_single_published_post_with_tags_or_404(**kwargs) -> Woman:
     try:
         return get_object_or_404(Woman.published.prefetch_related('tags').defer('status', 'time_created', 'husband_id'),
@@ -46,25 +39,10 @@ def get_single_published_post_with_tags_or_404(**kwargs) -> Woman:
         raise Http404()
 
 
-def get_single_published_post_with_category_or_404(**kwargs) -> Woman:
-    try:
-        return get_object_or_404(
-            Woman.published.select_related('category').defer('category__slug', 'status', 'time_created'), **kwargs)
-    except Woman.MultipleObjectsReturned:
-        raise Http404()
-
-
 def get_post_category_or_404(**kwargs):
     try:
         return get_object_or_404(WomanCategory.objects.defer('slug'), **kwargs)
     except WomanCategory.MultipleObjectsReturned:
-        raise Http404()
-
-
-def get_post_category_with_posts_or_404(**kwargs):
-    try:
-        return get_object_or_404(WomanCategory.objects.defer('slug').prefetch_related('posts'), **kwargs)
-    except Woman.MultipleObjectsReturned:
         raise Http404()
 
 
