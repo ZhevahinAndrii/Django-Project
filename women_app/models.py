@@ -28,7 +28,8 @@ class Woman(models.Model):
                                  related_query_name="post", verbose_name='Категорія', blank=True)
     tags = models.ManyToManyField(to='PostTag', blank=True, related_name='posts', related_query_name='post',
                                   verbose_name='Теги')
-    husband = models.OneToOneField(to='Man', on_delete=models.SET_NULL, null=True, blank=True, related_name='wife')
+    husband = models.OneToOneField(to='Man', on_delete=models.SET_NULL, null=True, blank=True, related_name='wife',
+                                   verbose_name='Чоловік')
 
     class Meta:
         verbose_name = 'Жінка'
@@ -94,4 +95,3 @@ class Man(models.Model):
 
 class UploadFilesModel(models.Model):
     file = models.FileField(verbose_name="Файл для завантаження", upload_to='uploads_model')
-
