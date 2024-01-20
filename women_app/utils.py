@@ -1,4 +1,5 @@
-menu = [{'title': 'Про сайт', 'url_name': "women:about"}, {'title': 'Додавання публікації', 'url_name': 'women:addpost'}]
+menu = [{'title': 'Про сайт', 'url_name': "women:about"},
+        {'title': 'Додавання публікації', 'url_name': 'women:addpost'}]
 
 
 class DataMixin:

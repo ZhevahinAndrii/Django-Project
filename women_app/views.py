@@ -2,6 +2,7 @@ import copy
 import uuid
 
 from django.core.handlers.wsgi import WSGIRequest
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
@@ -22,18 +23,14 @@ def handle_uploaded_file(f):
 
 
 def about(request: WSGIRequest):
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            file_model = UploadFilesModel(file=form.cleaned_data['file'])
-            file_model.save()
-    else:
-        form = UploadFileForm()
+    posts = services.get_all_published_posts()
+    paginator = Paginator(posts, 3)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
     context = {
         'title': 'Про сайт',
         'menu': menu,
-        'form': form
-
+        'page': page
     }
     return render(request, 'women/about.html', context=context)
 
@@ -46,6 +43,7 @@ class IndexView(DataMixin, ListView):
     context_object_name = 'posts'
     title = 'Домашня сторінка'
     category_selected = 0
+    paginate_by = 3
 
 
 class CategoryView(DataMixin, ListView):

@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
 
-from .models import WomanCategory, Man, Woman
+from .models import WomanCategory, Man, Woman, PostTag
 
 
 @deconstructible
@@ -26,10 +26,11 @@ class AddPostForm(forms.ModelForm):
     # forms.CharField(widget=forms.Textarea(attrs={'cols': 50, 'rows': 5}), required=False, label='Зміст',
     # empty_value='Content') status = forms.ChoiceField(choices=((0, 'Чернетка'), (1, 'Опубліковано')),
     # label='Статус', initial=1)
-    category = forms.ModelChoiceField(queryset=WomanCategory.objects.all(), label='Категорія', empty_label='Не обрано',
-                                      required=False)
-    husband = forms.ModelChoiceField(queryset=Man.objects.filter(wife__isnull=True), required=False, label='Чоловік',
-                                     empty_label='Незаміжня')
+    category = forms.ModelChoiceField(queryset=WomanCategory.objects.all().defer('slug'), label='Категорія',
+                                      empty_label='Не обрано', required=False)
+    husband = forms.ModelChoiceField(queryset=Man.objects.filter(wife__isnull=True).defer('age', 'marriages_count'),
+                                     required=False, label='Чоловік', empty_label='Незаміжня')
+    tags = forms.ModelMultipleChoiceField(queryset=PostTag.objects.all().defer('slug'), label='Теги', required=False)
 
     class Meta:
         model = Woman

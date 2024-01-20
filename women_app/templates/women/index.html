@@ -21,3 +21,12 @@
 	{% endfor %}
 </ul>
 {% endblock %}
+{% block navigation %}
+    <nav class="list-pages">
+        {% for p in paginator.page_range %}
+            <li class="page-num">
+                <a href="?page={{ p }}">{{ p }}</a>
+            </li>
+        {% endfor %}
+    </nav>
+{% endblock %}
