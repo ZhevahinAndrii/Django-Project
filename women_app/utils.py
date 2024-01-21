@@ -1,14 +1,16 @@
-menu = [{'title': 'Про сайт', 'url_name': "women:about"},
-        {'title': 'Додавання публікації', 'url_name': 'women:addpost'}]
+from django.core.paginator import Paginator
+
+menu = [{'title': 'Про сайт', 'url_name': "women_app:about"},
+        {'title': 'Додавання публікації', 'url_name': 'women_app:addpost'}]
 
 
 class DataMixin:
     title = None
     category_selected = None
     extra_context = {}
+    paginate_by = 3
 
     def __init__(self):
-        self.extra_context['menu'] = menu
         if self.title:
             self.extra_context['title'] = self.title
         if self.category_selected is not None:

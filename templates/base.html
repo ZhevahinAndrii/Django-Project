@@ -4,9 +4,9 @@
 <html>
 <head>
 	<title>{{title}}</title>
-	<link type="text/css" href="{% static 'women/css/styles.css' %}" rel="stylesheet" />
+	<link type="text/css" href="{% static 'women_app/css/styles.css' %}" rel="stylesheet" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link rel="shortcut icon" href="{% static 'women/images/main.ico' %}" type="image/x-icon"/>
+	<link rel="shortcut icon" href="{% static 'women_app/images/main.ico' %}" type="image/x-icon"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -15,17 +15,25 @@
 {% block mainmenu %}
 		<div class="header">
 			<ul id="mainmenu" class="mainmenu">
-			<li class="logo"><a href="{% url 'women:index' %}"><div class="logo"></div></a></li>
+			<li class="logo"><a href="{% url 'women_app:index' %}"><div class="logo"></div></a></li>
 {% for m in menu %}
-	{% if not forloop.last %}<li>{% else %}<li class="last">{% endif %}
-    {% if m.url_name == 'women:updatepost' %}
+	<li>
+    {% if m.url_name == 'women_app:updatepost' %}
         <a href="{% url m.url_name post.slug %}">{{ m.title }}</a></li>
     {% else %}
         <a href="{% url m.url_name %}">{{m.title}}</a></li>
     {% endif %}
-
-
 {% endfor %}
+            {% if user.is_authenticated %}
+            <li class="last">{{ user.username }} |
+                <form style="display: inline-block" method="post" action="{% url 'users_app:logout'%}?next={{ request.path }}">
+                    {% csrf_token %}
+                    <button style="background: transparent; border: none; font-size:20px" type="submit"><a>Вийти</a></button>
+                </form>
+            </li>
+            {% else %}
+                <li class="last"><a href="{% url 'users_app:login' %}">Увійти</a> | <a href="#">Реєстрація</a></li>
+            {% endif %}
 			</ul>
 			<div class="clear"></div>
 		</div>
@@ -40,7 +48,7 @@
         {% if category_selected == 0 %}
 		<li class="selected">Всі категорії</li>
         {% else %}
-            <li><a href="{% url 'women:index' %}">Всі категорії</a></li>
+            <li><a href="{% url 'women_app:index' %}">Всі категорії</a></li>
          {% endif %}
 {#        {% get_categories as cats %}   ------usage of simple tags#}
 {#        {% for cat in cats %}#}

@@ -46,7 +46,7 @@ class Woman(models.Model):
         super().save(force_insert, force_update, using, update_fields)
 
     def get_absolute_url(self):
-        return reverse("women:post", kwargs={'post_slug': self.slug})
+        return reverse("women_app:post", kwargs={'post_slug': self.slug})
 
     def __str__(self):
         return self.title
@@ -63,7 +63,7 @@ class WomanCategory(models.Model):
         verbose_name_plural = 'Категорії публікацій'
 
     def get_absolute_url(self):
-        return reverse("women:category", kwargs={'category_slug': self.slug})
+        return reverse("women_app:category", kwargs={'category_slug': self.slug})
 
     def __str__(self):
         return self.name
@@ -78,7 +78,7 @@ class PostTag(models.Model):
         indexes = (models.Index(fields=('slug',)),)
 
     def get_absolute_url(self):
-        return reverse("women:tag", kwargs={'tag_slug': self.slug})
+        return reverse("women_app:tag", kwargs={'tag_slug': self.slug})
 
     def __str__(self):
         return self.title

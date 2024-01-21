@@ -9,7 +9,8 @@ from .handlers import page_not_found
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('women/', include('women_app.urls', namespace='women')),
+    path('women/', include('women_app.urls', namespace='women_app')),
+    path('users/', include('users_app.urls', namespace='users_app')),
     path('__debug__/', include('debug_toolbar.urls'))
 ]
 
