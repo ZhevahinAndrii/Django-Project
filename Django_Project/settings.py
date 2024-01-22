@@ -134,6 +134,6 @@ MEDIA_URL = 'media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = reverse_lazy('women_app:index')
-LOGIN_URL = reverse_lazy('users_app:login')
-LOGOUT_REDIRECT_URL = reverse_lazy('women_app:index')
+LOGIN_URL = 'users_app:login'
+LOGIN_REDIRECT_URL = 'women_app:index'
+LOGOUT_REDIRECT_URL = 'women_app:index'

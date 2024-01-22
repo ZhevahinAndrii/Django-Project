@@ -7,7 +7,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 
-from .forms import LoginUserForm
+from .forms import LoginUserForm, RegisterUserForm
+
 
 # def LoginUserView(request: WSGIRequest):
 #     if request.method == 'POST':
@@ -27,5 +28,18 @@ class LoginUserView(LoginView):
     template_name = 'users_app/login.html'
     extra_context = {'title': 'Авторизація'}
 
-    # def get_success_url(self):
-    #     return reverse('women_app:index')
+
+def register(request: WSGIRequest):
+    if request.method == "POST":
+        form = RegisterUserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            return render(request, 'users_app/register_done.html')
+    else:
+        form = RegisterUserForm()
+    return render(request, 'users_app/register.html', {'form': form})
+
+
+

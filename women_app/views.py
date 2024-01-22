@@ -1,6 +1,8 @@
 import copy
 import uuid
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
@@ -28,9 +30,12 @@ def about(request: WSGIRequest):
 
 class IndexView(DataMixin, ListView):
     template_name = 'women_app/index.html'
-    queryset = services.get_all_published_posts().select_related("category").defer('status', 'category__slug',
-                                                                                   'time_created',
-                                                                                   'husband_id')
+    queryset = services.get_all_published_posts().select_related("category", 'author').only('slug', 'title', 'content',
+                                                                                            'time_last_modified', 'photo',
+                                                                                            'category__name', 'author__username')
+    # queryset = services.get_all_published_posts().select_related("category").defer('status', 'category__slug',
+    #                                                                                'time_created',
+    #                                                                                'husband_id').select_related('author').defer('')
     context_object_name = 'posts'
     title = 'Домашня сторінка'
     category_selected = 0
@@ -92,7 +97,7 @@ class PostView(DataMixin, DetailView):
         return context
 
 
-class AddPostView(DataMixin, CreateView):
+class AddPostView(LoginRequiredMixin, DataMixin, CreateView):
     template_name = 'women_app/addpost.html'
     form_class = AddPostForm
     success_url = reverse_lazy('women_app:index')
@@ -100,8 +105,13 @@ class AddPostView(DataMixin, CreateView):
     # to get_absolute_url of created object#
     title = 'Додавання публікації'
 
+    def form_valid(self, form):
+        woman: Woman = form.save(commit=False)
+        woman.author = self.request.user
+        return super().form_valid(form)
 
-class UpdatePostView(UpdateView):
+
+class UpdatePostView(LoginRequiredMixin, UpdateView):
     template_name = 'women_app/addpost.html'
     form_class = AddPostForm
     success_url = reverse_lazy('women_app:index')

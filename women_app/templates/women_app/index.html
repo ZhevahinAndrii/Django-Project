@@ -4,7 +4,7 @@
 <ul class="list-articles">
 	{% for p in posts %}
         <li><div class="article-panel">
-            <p class="first">Категорія: {{ p.category }}</p>
+            <p class="first">Категорія: {{ p.category }} | Автор: {{ p.author.username|default:"admin"}}</p>
             <p class="last">Остання зміна: {{ p.time_last_modified|date:"d-m-Y H:i:s" }}</p>
         </div>
         {% if p.photo %}

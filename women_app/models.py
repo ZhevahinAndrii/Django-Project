@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from django.utils.text import gettext_lazy, slugify
@@ -26,10 +27,11 @@ class Woman(models.Model):
     category = models.ForeignKey(to="WomanCategory", on_delete=models.SET_NULL, null=True,
                                  related_name="posts",
                                  related_query_name="post", verbose_name='Категорія', blank=True)
-    tags = models.ManyToManyField(to='PostTag', blank=True, related_name='posts', related_query_name='post',
+    tags = models.ManyToManyField(to='PostTag', related_name='posts', related_query_name='post',
                                   verbose_name='Теги')
     husband = models.OneToOneField(to='Man', on_delete=models.SET_NULL, null=True, blank=True, related_name='wife',
                                    verbose_name='Чоловік')
+    author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, related_name='posts', null=True)
 
     class Meta:
         verbose_name = 'Жінка'
