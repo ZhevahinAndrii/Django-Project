@@ -26,7 +26,7 @@
     </li>
 {% endfor %}
             {% if user.is_authenticated %}
-            <li class="last">{{ user.username }} |
+                <li class="last"><a href="{% url 'users_app:profile' %}">{{ user.username }}</a> |
                 <form style="display: inline-block" method="post" action="{% url 'users_app:logout'%}?next={{ request.path }}">
                     {% csrf_token %}
                     <button style="background: transparent; border: none; font-size:20px" type="submit"><a>Вийти</a></button>

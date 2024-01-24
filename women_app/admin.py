@@ -10,7 +10,7 @@ class MarriedFilter(admin.SimpleListFilter):
     parameter_name = 'status'
 
     def lookups(self, request, model_admin):
-        return[
+        return [
             ('married', 'Заміжня'),
             ('single', 'Незаміжня')
         ]
@@ -27,7 +27,7 @@ class MarriedFilter(admin.SimpleListFilter):
 @admin.register(Woman)
 class WomanAdmin(admin.ModelAdmin):
     fields = ('title', 'slug', 'content', 'category', 'husband', 'tags', 'photo', 'post_photo')
-    prepopulated_fields = {'slug': ('title', )}
+    prepopulated_fields = {'slug': ('title',)}
     filter_horizontal = ('tags',)
     # filter_vertical = ('tags', )
     list_display = ('title', 'time_created', 'time_last_modified', 'status', 'category', 'post_photo')
@@ -63,6 +63,7 @@ class WomanAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return Woman.objects.all().select_related('category')
+
 
 @admin.register(WomanCategory)
 class WomanCategoryAdmin(admin.ModelAdmin):

@@ -137,3 +137,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'users_app:login'
 LOGIN_REDIRECT_URL = 'women_app:index'
 LOGOUT_REDIRECT_URL = 'women_app:index'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users_app.authentication.EmailAuthBackend'
+]

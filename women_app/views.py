@@ -1,7 +1,5 @@
 import copy
-import uuid
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
@@ -31,8 +29,10 @@ def about(request: WSGIRequest):
 class IndexView(DataMixin, ListView):
     template_name = 'women_app/index.html'
     queryset = services.get_all_published_posts().select_related("category", 'author').only('slug', 'title', 'content',
-                                                                                            'time_last_modified', 'photo',
-                                                                                            'category__name', 'author__username')
+                                                                                            'time_last_modified',
+                                                                                            'photo',
+                                                                                            'category__name',
+                                                                                            'author__username')
     # queryset = services.get_all_published_posts().select_related("category").defer('status', 'category__slug',
     #                                                                                'time_created',
     #                                                                                'husband_id').select_related('author').defer('')

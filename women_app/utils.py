@@ -1,5 +1,3 @@
-from django.core.paginator import Paginator
-
 menu = [{'title': 'Про сайт', 'url_name': "women_app:about"},
         {'title': 'Додавання публікації', 'url_name': 'women_app:addpost'}]
 
