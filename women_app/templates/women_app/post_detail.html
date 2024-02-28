@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block breadcrumbs %}
+    {% if perms.women_app.change_woman %}
+    <p><a href="{% url 'women_app:updatepost' post.slug %}">Редагувати публікацію</a></p>
+    {% endif %}
     {% with post.tags.all as tags %}
     {% if tags %}
         <ul class="tags-list">

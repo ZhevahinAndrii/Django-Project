@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm, PasswordResetForm
 
 
 class LoginUserForm(AuthenticationForm):
@@ -44,6 +44,7 @@ class RegisterUserForm(UserCreationForm):
 
 class ProfileUserForm(forms.ModelForm):
     email = forms.CharField(disabled=True, label='Адреса електронної пошти', widget=forms.TextInput(attrs={'class': 'form-input'}))
+
     class Meta:
         model = get_user_model()
         fields = ('username', 'email', 'first_name', 'last_name')
@@ -57,3 +58,15 @@ class ProfileUserForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-input'}),
             'last_name': forms.TextInput(attrs={'class': 'form-input'})
         }
+
+
+class UserPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(label='Старий пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
+    new_password1 = forms.CharField(label='Новий пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
+    new_password2 = forms.CharField(label='Підтвердження паролю', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
+
+
+class UserPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(label='Адреса електронної пошти', max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email"}))
+
+

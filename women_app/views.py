@@ -1,6 +1,6 @@
 import copy
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
@@ -91,16 +91,14 @@ class PostView(DataMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context = self.get_mixin_context(context, title=context[self.context_object_name].title,
                                          category_selected=context[self.context_object_name].category_id)
-        post_menu = copy.copy(menu)
-        post_menu.append({'title': 'Оновлення публікації', 'url_name': 'women_app:updatepost'})
-        context['menu'] = post_menu
         return context
 
 
-class AddPostView(LoginRequiredMixin, DataMixin, CreateView):
+class AddPostView(PermissionRequiredMixin, LoginRequiredMixin, DataMixin, CreateView):
     template_name = 'women_app/addpost.html'
     form_class = AddPostForm
     success_url = reverse_lazy('women_app:index')
+    permission_required = 'women_app.add_woman'
     # if you don`t use success url it will be automatically redirected
     # to get_absolute_url of created object#
     title = 'Додавання публікації'
@@ -111,16 +109,16 @@ class AddPostView(LoginRequiredMixin, DataMixin, CreateView):
         return super().form_valid(form)
 
 
-class UpdatePostView(LoginRequiredMixin, UpdateView):
+class UpdatePostView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     template_name = 'women_app/addpost.html'
     form_class = AddPostForm
     success_url = reverse_lazy('women_app:index')
-
+    permission_required = 'women_app.change_woman'
     slug_url_kwarg = 'post_slug'
     context_object_name = 'post'
     title = 'Оновлення публікації'
 
     def get_object(self, queryset=None):
         return get_object_or_404(
-            Woman.objects.prefetch_related('tags').defer('time_created', 'time_last_modified', 'slug'),
+            Woman.objects.prefetch_related('tags').defer('time_created', 'time_last_modified'),
             slug=self.kwargs[self.slug_url_kwarg])
